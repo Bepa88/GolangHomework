@@ -7,9 +7,9 @@ var age int = 35
 var city string = "Kyiv"
 var hobby string = "drawing"
 
-func aboutMe(string, int, string, string) {
+func aboutMe(name string, age int, city string, hobby string) {
 
-	fmt.Printf("My name is %s. I'm %d years old. I'm from %s. I like %s.", firstName, age, city, hobby)
+	fmt.Printf("My name is %s. I'm %d years old. I'm from %s. I like %s.", name, age, city, hobby)
 }
 
 func main() {
