@@ -5,8 +5,8 @@ import "fmt"
 type countCatchingAnimals int
 
 type Cage struct {
-	size    string
-	isEmpty bool
+	size      string
+	hasAnimal bool
 }
 
 type Animal struct {
@@ -21,7 +21,7 @@ type Zookeeper struct {
 }
 
 func (z *Zookeeper) catch(a Animal) {
-	a.cage.isEmpty = false
+	a.cage.hasAnimal = true
 	a.runAway = false
 	z.catchAnimal++
 	fmt.Printf("%s in cage \n", a.name)
@@ -32,8 +32,8 @@ func main() {
 
 	tiger := Animal{
 		cage: Cage{
-			size:    "Big",
-			isEmpty: true,
+			size:      "Big",
+			hasAnimal: false,
 		},
 		name:    "Tiger",
 		runAway: true,
@@ -41,8 +41,8 @@ func main() {
 
 	zebra := Animal{
 		cage: Cage{
-			size:    "Big",
-			isEmpty: true,
+			size:      "Big",
+			hasAnimal: false,
 		},
 		name:    "Zebra",
 		runAway: true,
@@ -50,8 +50,8 @@ func main() {
 
 	elephant := Animal{
 		cage: Cage{
-			size:    "Big",
-			isEmpty: true,
+			size:      "Big",
+			hasAnimal: false,
 		},
 		name:    "Elephant",
 		runAway: true,
@@ -59,8 +59,8 @@ func main() {
 
 	monkey := Animal{
 		cage: Cage{
-			size:    "Big",
-			isEmpty: true,
+			size:      "Big",
+			hasAnimal: false,
 		},
 		name:    "Monkey",
 		runAway: true,
@@ -68,8 +68,8 @@ func main() {
 
 	giraffe := Animal{
 		cage: Cage{
-			size:    "Big",
-			isEmpty: true,
+			size:      "Big",
+			hasAnimal: false,
 		},
 		name:    "Giraffe",
 		runAway: true,
