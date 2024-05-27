@@ -4,15 +4,13 @@ import "fmt"
 
 type countCatchingAnimals int
 
+type Animal struct {
+	name string
+}
 type Cage struct {
+	animal    Animal
 	size      string
 	hasAnimal bool
-}
-
-type Animal struct {
-	cage    Cage
-	name    string
-	runAway bool
 }
 
 type Zookeeper struct {
@@ -20,68 +18,46 @@ type Zookeeper struct {
 	catchAnimal countCatchingAnimals
 }
 
-func (z *Zookeeper) catch(a Animal) {
-	a.cage.hasAnimal = true
-	a.runAway = false
+func (z *Zookeeper) catching(a Animal) {
+	var cage = Cage{
+		animal:    a,
+		size:      "Big",
+		hasAnimal: true,
+	}
 	z.catchAnimal++
-	fmt.Printf("%s in cage \n", a.name)
+	fmt.Printf("%s in cage \n", cage.animal.name)
 	fmt.Printf("%s catch %d animals \n", z.name, z.catchAnimal)
 }
 
 func main() {
 
 	tiger := Animal{
-		cage: Cage{
-			size:      "Big",
-			hasAnimal: false,
-		},
-		name:    "Tiger",
-		runAway: true,
+		name: "Tiger",
 	}
 
 	zebra := Animal{
-		cage: Cage{
-			size:      "Big",
-			hasAnimal: false,
-		},
-		name:    "Zebra",
-		runAway: true,
+		name: "Zebra",
 	}
 
 	elephant := Animal{
-		cage: Cage{
-			size:      "Big",
-			hasAnimal: false,
-		},
-		name:    "Elephant",
-		runAway: true,
+		name: "Elephant",
 	}
 
 	monkey := Animal{
-		cage: Cage{
-			size:      "Big",
-			hasAnimal: false,
-		},
-		name:    "Monkey",
-		runAway: true,
+		name: "Monkey",
 	}
 
 	giraffe := Animal{
-		cage: Cage{
-			size:      "Big",
-			hasAnimal: false,
-		},
-		name:    "Giraffe",
-		runAway: true,
+		name: "Giraffe",
 	}
 
 	z := Zookeeper{
 		name: "John",
 	}
-	z.catch(tiger)
-	z.catch(zebra)
-	z.catch(elephant)
-	z.catch(monkey)
-	z.catch(giraffe)
+	z.catching(tiger)
+	z.catching(zebra)
+	z.catching(elephant)
+	z.catching(monkey)
+	z.catching(giraffe)
 
 }
