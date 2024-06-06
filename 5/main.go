@@ -7,9 +7,13 @@ import (
 	"strings"
 )
 
-var note = make(map[string][]string)
+type Note map[string][]string
 
-func indexTextByWords(text []string) {
+//var note = make(map[string][]string)
+
+func indexTextByWords(text []string) Note {
+
+	note := make(Note)
 
 	for _, v := range text {
 		words := strings.Fields(v)
@@ -17,10 +21,11 @@ func indexTextByWords(text []string) {
 			note[word] = append(note[word], v)
 		}
 	}
+	return note
 }
 
-func findLinesByWord(word string) []string {
-	if lines, ok := note[word]; ok {
+func (n Note) findLinesByWord(word string) []string {
+	if lines, ok := n[word]; ok {
 		return lines
 	}
 	return []string{"Немає рядка зі словом: " + word}
@@ -41,9 +46,8 @@ func main() {
 	}
 	fmt.Print("Введіть рядок для пошуку:")
 	fmt.Scan(&searchString)
-	indexTextByWords(text)
 
-	lines := findLinesByWord(searchString)
+	lines := indexTextByWords(text).findLinesByWord(searchString)
 	for _, line := range lines {
 		fmt.Println(line)
 	}
