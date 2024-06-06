@@ -9,8 +9,6 @@ import (
 
 type Note map[string][]string
 
-//var note = make(map[string][]string)
-
 func indexTextByWords(text []string) Note {
 
 	note := make(Note)
