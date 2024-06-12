@@ -5,11 +5,11 @@ import (
 	"homework_6/passenger"
 )
 
-type PublicTransport interface {
-	AcceptPassengers(p passenger.Passenger)
-	DropOffPassengers(p passenger.Passenger)
-	GetName() string
-}
+// type PublicTransport interface {
+// 	AcceptPassengers(p passenger.Passenger)
+// 	DropOffPassengers(p passenger.Passenger)
+// 	GetName() string
+// }
 
 type Bus struct {
 	Name       string
@@ -64,6 +64,7 @@ func (t Train) GetName() string {
 type Airplane struct {
 	Name       string
 	Passengers []passenger.Passenger
+	Parachute  []int
 }
 
 func (a *Airplane) AcceptPassengers(p passenger.Passenger) {
@@ -74,9 +75,13 @@ func (a *Airplane) AcceptPassengers(p passenger.Passenger) {
 func (a *Airplane) DropOffPassengers(p passenger.Passenger) {
 	for i, passenger := range a.Passengers {
 		if passenger.Id == p.Id {
-			a.Passengers = append(a.Passengers[:i], a.Passengers[i+1:]...)
-			fmt.Printf("Пасажир %s вийшов з літака \n", p.Name)
-			return
+			if a.Parachute != nil {
+				a.Passengers = append(a.Passengers[:i], a.Passengers[i+1:]...)
+				a.Parachute = append(a.Parachute[:i], a.Parachute[i+1:]...)
+				fmt.Printf("Пасажир %s вийшов з літака \n", p.Name)
+				return
+			}
+			fmt.Printf("Нажаль, в наявності немає парашуту")
 		}
 	}
 	fmt.Printf("Такого пасажира не знайдено")

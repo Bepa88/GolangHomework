@@ -2,14 +2,20 @@ package route
 
 import (
 	"fmt"
-	publictransport "homework_6/publicTransport"
+	"homework_6/passenger"
 )
 
-type Route struct {
-	Transports []publictransport.PublicTransport
+type PublicTransport interface {
+	AcceptPassengers(p passenger.Passenger)
+	DropOffPassengers(p passenger.Passenger)
+	GetName() string
 }
 
-func (r *Route) AddTransport(transport publictransport.PublicTransport) {
+type Route struct {
+	Transports []PublicTransport
+}
+
+func (r *Route) AddTransport(transport PublicTransport) {
 	r.Transports = append(r.Transports, transport)
 }
 
