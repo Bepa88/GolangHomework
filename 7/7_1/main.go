@@ -6,13 +6,12 @@ import (
 )
 
 func main() {
-
 	intSliceCh := make(chan []int)
 	intCh := make(chan int)
 
 	go rendom(100, intSliceCh)
-	go averageValue(<-intSliceCh, intCh)
-	go printSum(<-intCh)
+	go averageValue(intSliceCh, intCh)
+	go printSum(intCh)
 	fmt.Scanln()
 }
 
@@ -25,7 +24,8 @@ func rendom(n int, ch chan []int) {
 	close(ch)
 }
 
-func averageValue(randomSlice []int, ch chan int) {
+func averageValue(random chan []int, ch chan int) {
+	randomSlice := <-random
 	capCh := len(randomSlice)
 	var sum int
 	for _, value := range randomSlice {
@@ -35,6 +35,7 @@ func averageValue(randomSlice []int, ch chan int) {
 	close(ch)
 }
 
-func printSum(sum int) {
+func printSum(sumCh chan int) {
+	sum := <-sumCh
 	fmt.Println(sum)
 }
