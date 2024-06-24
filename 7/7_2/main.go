@@ -5,41 +5,44 @@ import (
 	"math/rand"
 )
 
-func main() {
-	intSliceCh := make(chan []int)
-	intChMin := make(chan int)
-	intChMax := make(chan int)
+type MinMax struct {
+	min int
+	max int
+}
 
-	go rendom(100, intSliceCh, intChMin, intChMax)
-	go minMax(intSliceCh, intChMin, intChMax)
+func main() {
+
+	intSliceCh := make(chan []int)
+	chMinMax := make(chan MinMax)
+
+	go rendom(100, intSliceCh, chMinMax)
+	go minMax(intSliceCh, chMinMax)
 	fmt.Scanln()
 }
 
-func rendom(n int, ch chan []int, min chan int, max chan int) {
+func rendom(n int, ch chan []int, minMax chan MinMax) {
 	var result []int
 	for i := 1; i <= n; i++ {
 		result = append(result, rand.Intn(100))
 	}
 	ch <- result
 	close(ch)
-	fmt.Println(<-min)
-	fmt.Println(<-max)
+	minMaxV := <-minMax
+	fmt.Println(minMaxV.min)
+	fmt.Println(minMaxV.max)
 }
 
-func minMax(random chan []int, min chan int, max chan int) {
+func minMax(random chan []int, minMax chan MinMax) {
 	randomSlice := <-random
-	maxVal := randomSlice[0]
-	minVal := randomSlice[0]
+	var minMaxVal MinMax
 	for _, value := range randomSlice {
-		if value > maxVal {
-			maxVal = value
+		if value > minMaxVal.max {
+			minMaxVal.max = value
 		}
-		if value < minVal {
-			minVal = value
+		if value < minMaxVal.min {
+			minMaxVal.min = value
 		}
 	}
-	min <- maxVal
-	max <- minVal
-	close(min)
-	close(max)
+	minMax <- minMaxVal
+	close(minMax)
 }
