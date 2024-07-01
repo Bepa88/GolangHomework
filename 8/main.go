@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"time"
 )
 
@@ -124,8 +125,12 @@ func generator(ctx context.Context, q Quiz, questChan chan Question) {
 		select {
 		case <-ctx.Done():
 			return
-		case questChan <- val:
-			<-t.C
+		case <-t.C:
+			select {
+			case <-ctx.Done():
+				return
+			case questChan <- val:
+			}
 		}
 	}
 }
@@ -146,9 +151,16 @@ func sendQuestionsToPlayer(ctx context.Context, questChan chan Question, players
 			}
 
 			for i := range players {
-				fmt.Printf("%s, your answer: ", players[i].Name)
-				fmt.Scan(&players[i].AnswerId)
+				//fmt.Printf("%s, your answer: ", players[i].Name)
+				//fmt.Scan(&players[i].AnswerId)
+				players[i].AnswerId = rand.Intn(4-1+1) + 1
 				players[i].QuestionId = sendingQuestion.Id
+				for _, ans := range sendingQuestion.Answers {
+					if players[i].AnswerId == ans.Id {
+						players[i].IsCorrect = ans.IsCorrect
+						break
+					}
+				}
 				playersAnswer = append(playersAnswer, players[i])
 			}
 		}
@@ -164,17 +176,6 @@ func checkAnswers(ctx context.Context, playersChan chan []Player, resultChan cha
 		return
 	case allPlayers := <-playersChan:
 		for _, player := range allPlayers {
-			for _, q := range questions {
-				if player.QuestionId == q.Id {
-					for _, ans := range q.Answers {
-						if player.AnswerId == ans.Id {
-							player.IsCorrect = ans.IsCorrect
-							break
-						}
-					}
-					break
-				}
-			}
 			if player.IsCorrect {
 				playersWithWriteAnswers = append(playersWithWriteAnswers, player)
 			}
