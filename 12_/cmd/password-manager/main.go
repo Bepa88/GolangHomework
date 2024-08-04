@@ -1,75 +1,67 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"homeWork_12_/internal/storage"
-	"strings"
+	"os"
 )
 
 func main() {
 	s := storage.NewStorage("passwords.txt")
 
-	for {
-		fmt.Println("\nMenu:")
-		fmt.Println("1. List saved passwords")
-		fmt.Println("2. Save a new password")
-		fmt.Println("3. Retrieve a saved password")
-		fmt.Println("4. Exit")
-		fmt.Print("Enter your choice: ")
+	if len(os.Args) < 2 {
+		fmt.Println("Expected 'save', 'get', or 'list' subcommands")
+		os.Exit(1)
+	}
 
-		var choice string
-		fmt.Scan(&choice)
-		choice = strings.TrimSpace(choice)
+	switch os.Args[1] {
+	case "save":
+		saveCmd := flag.NewFlagSet("save", flag.ExitOnError)
+		name := saveCmd.String("name", "", "Name of the service")
+		password := saveCmd.String("password", "", "Password for the service")
+		saveCmd.Parse(os.Args[2:])
 
-		switch choice {
-		case "1":
-			listPasswords(s)
-		case "2":
-			savePassword(s)
-		case "3":
-			retrievePassword(s)
-		case "4":
-			fmt.Println("Exiting...")
-			return
-		default:
-			fmt.Println("Invalid choice, please try again.")
+		if *name == "" || *password == "" {
+			fmt.Println("Both name and password are required")
+			saveCmd.Usage()
+			os.Exit(1)
 		}
-	}
-}
 
-func listPasswords(s *storage.Storage) {
-	fmt.Println("\nSaved passwords:")
-	names := s.GetAllNames()
-	for _, name := range names {
-		fmt.Println(name)
-	}
-}
+		s.Save(*name, *password)
+		fmt.Println("Password saved successfully")
 
-func savePassword(s *storage.Storage) {
-	fmt.Print("Enter name: ")
-	var name string
-	fmt.Scan(&name)
-	name = strings.TrimSpace(name)
+	case "get":
+		getCmd := flag.NewFlagSet("get", flag.ExitOnError)
+		name := getCmd.String("name", "", "Name of the service")
+		getCmd.Parse(os.Args[2:])
 
-	fmt.Print("Enter password: ")
-	var password string
-	fmt.Scan(&password)
-	password = strings.TrimSpace(password)
+		if *name == "" {
+			fmt.Println("Name is required")
+			getCmd.Usage()
+			os.Exit(1)
+		}
 
-	s.Save(name, password)
-	fmt.Println("Password saved.")
-}
+		password, found := s.Get(*name)
+		if found {
+			fmt.Printf("Password for %s: %s\n", *name, password)
+		} else {
+			fmt.Printf("No password found for %s\n", *name)
+		}
 
-func retrievePassword(s *storage.Storage) {
-	fmt.Print("Enter name: ")
-	var name string
-	fmt.Scan(&name)
-	name = strings.TrimSpace(name)
+	case "list":
+		names := s.List()
+		if len(names) == 0 {
+			fmt.Println("No passwords stored")
+		} else {
+			fmt.Println("Saved passwords:")
+			for _, name := range names {
+				fmt.Println(name)
+			}
+		}
 
-	password, found := s.Get(name)
-	if found {
-		fmt.Printf("Password for %s: %s\n", name, password)
-	} else {
-		fmt.Println("Password not found.")
+	default:
+		fmt.Println("Expected 'save', 'get', or 'list' subcommands")
+		os.Exit(1)
 	}
 }
